@@ -12,11 +12,30 @@
         <h1>Party</h1>
     </header>
     <main class="content-area">
+        <dialog id = "addCharacter">
+            <h2> Add Character </h2>
+            <form id="add-character-form" method="dialog">
+                <label>Name <input name="name" required /></label>
+                <label>Class <input name="classType" required /></label>
+                <label>Level <input name="level" type="number" min="1" required /></label>
+                <label>HP <input name="hp" type="number" min="0" required /></label>
+                <label><input name="isActive" type="checkbox" checked /> Active</label>
+
+                <div class="add-character-form-actions">
+                    <button type="button" id="cancel-add-player">Cancel</button>
+                    <button type="submit">Create Player</button>
+                </div>
+            </form>
+        </dialog>
         <div class="party-actions">
             <button id="add-character-btn" type="button">Add</button>
             <button id="remove-character-btn" type="button">Remove</button>
         </div>
         <div class="character-container"></div>
+        <div class="remove-action-bar">
+            <button id="confirm-remove-btn" type="button">Delete</button>
+        </div>
+
     </main>
 </body>
 </html>

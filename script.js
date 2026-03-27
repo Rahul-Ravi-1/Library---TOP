@@ -15,7 +15,8 @@ const party = defaultData.map(
             character.isActive
         )
 );
-let selectedCharacterId = null;
+let selectedCharacterId = new Set();
+let canRemove = false;
 
 function PlayerCharacter(name, classType, level, hp, isActive) {
     this.id = crypto.randomUUID();
@@ -31,7 +32,86 @@ function createCharacter(name, classType, level, hp, isActive) {
 }
 
 function setupActionButtons() {
-    // Intentionally left blank for custom Add/Remove wiring.
+    const addBtn = document.querySelector("#add-character-btn");
+    const removeBtn = document.querySelector("#remove-character-btn");
+    const confirmRemoveBtn = document.querySelector("#confirm-remove-btn");
+
+    const dialog = document.querySelector("#addCharacter");
+    const form = document.querySelector("#add-character-form");
+
+    const addFormBtn = document.querySelector("#add-character-form");
+    const cancelFormBtn = document.querySelector("#cancel-add-player");
+
+    if (!addBtn || !removeBtn || !dialog || !addFormBtn || !cancelFormBtn) {
+        return;
+    }
+    
+    if (removeBtn) {
+        removeBtn.setAttribute("aria-pressed", "false");
+    }
+
+    updateRemoveUI();
+
+    removeBtn.addEventListener("click", () => {
+        canRemove = !canRemove;
+        if (!canRemove) {
+            selectedCharacterId.clear();
+        }
+        updateRemoveUI();
+        displayCharacters();
+    });
+
+    if (confirmRemoveBtn) {
+        confirmRemoveBtn.addEventListener("click", () => {
+           const selectedIds = selectedCharacterId;
+           const kept = party.filter(player => !selectedIds.has(player.id))
+           party.splice(0, party.length, ...kept);
+           selectedCharacterId.clear();
+            canRemove = false;
+           displayCharacters();
+        });
+    }
+
+    addBtn.addEventListener("click", () => {
+        dialog.showModal();
+    });
+
+    cancelFormBtn.addEventListener("click", () => {
+        dialog.close();
+    });
+
+    dialog.addEventListener("click", (event) => {
+        const rect = dialog.getBoundingClientRect();
+        const clickedInsideDialog =
+            event.clientX >= rect.left &&
+            event.clientX <= rect.right &&
+            event.clientY >= rect.top &&
+            event.clientY <= rect.bottom;
+
+        if (!clickedInsideDialog) {
+            dialog.close();
+        }
+    });
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const fd = new FormData(form);
+        const player = new PlayerCharacter(
+            String(fd.get("name")).trim(),
+            String(fd.get("classType")).trim(),
+            Number(fd.get("level")),
+            Number(fd.get("hp")),
+            fd.get("isActive") === "on"
+          );
+          party.push(player)
+          if (!canRemove) {
+              selectedCharacterId.clear();
+          }
+          displayCharacters();
+          form.reset();
+          dialog.close();
+    });
 }
 
 function displayCharacters() {
@@ -42,6 +122,8 @@ function displayCharacters() {
         const card = createCharacterCard(player);
         container.appendChild(card);
     });
+
+    updateRemoveUI();
 }
 
 function createCharacterCard(player) {
@@ -61,15 +143,23 @@ function createCharacterCard(player) {
     status.textContent = `Status: ${player.isActive ? "Active" : "Resting"}`;
     status.className = player.isActive ? "status-active" : "status-resting";
 
-    if (player.id === selectedCharacterId) {
-        card.classList.add("is-selected");
+    if (canRemove && selectedCharacterId.has(player.id)) {
+        if(!card.classList.contains("is-selected") || !card.classList.contains("is-remove-selected"))
+        {
+            card.classList.add("is-selected");
+            card.classList.add("is-remove-selected");
+        }
     }
 
     card.addEventListener("click", () => {
-        if (selectedCharacterId === player.id) {
-            selectedCharacterId = null;
+        if (!canRemove) {
+            return;
+        }
+
+        if (selectedCharacterId.has(player.id)) {
+            selectedCharacterId.delete(player.id);
         } else {
-            selectedCharacterId = player.id;
+            selectedCharacterId.add(player.id);
         }
         displayCharacters();
     });
@@ -77,6 +167,26 @@ function createCharacterCard(player) {
     card.append(name, classType, level, hp, status);
     return card;
 }
+
+function updateRemoveUI() {
+    const removeBtn = document.querySelector("#remove-character-btn");
+    const removeBar = document.querySelector(".remove-action-bar");
+    const confirmRemoveBtn = document.querySelector("#confirm-remove-btn");
+
+    if (removeBtn) {
+        removeBtn.classList.toggle("is-active", canRemove);
+        removeBtn.setAttribute("aria-pressed", String(canRemove));
+    }
+
+    if (removeBar) {
+        removeBar.classList.toggle("is-visible", canRemove);
+    }
+
+    if (confirmRemoveBtn) {
+        confirmRemoveBtn.disabled = selectedCharacterId.size === 0;
+    }
+}
+
 
 setupActionButtons();
 displayCharacters();

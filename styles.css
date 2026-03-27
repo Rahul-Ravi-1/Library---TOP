@@ -30,6 +30,96 @@ body {
   padding: 2rem 1rem;
 }
 
+#addCharacter {
+  width: min(560px, calc(100vw - 2rem));
+  border: 2px solid #b7c8c1;
+  border-radius: 10px;
+  background: #f9fcfb;
+  color: #1f2a2a;
+  box-shadow: 0 10px 0 #d8e4df;
+  padding: 1.4rem;
+}
+
+#addCharacter::backdrop {
+  background: rgba(31, 42, 42, 0.45);
+}
+
+#addCharacter h2 {
+  font-size: 0.85rem;
+  margin-bottom: 1.1rem;
+}
+
+#add-character-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+#add-character-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.55rem;
+  line-height: 1.4;
+}
+
+#add-character-form label:has(input[type="checkbox"]) {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#add-character-form input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.55rem;
+  color: #1f2a2a;
+  background: #eef5f1;
+  border: 2px solid #b7c8c1;
+  border-radius: 8px;
+  padding: 0.55rem 0.6rem;
+}
+
+#add-character-form input:focus {
+  outline: 2px solid #0b7d3f66;
+  outline-offset: 1px;
+}
+
+#add-character-form input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+}
+
+.add-character-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.45rem;
+}
+
+.add-character-form-actions button {
+  font: inherit;
+  font-size: 0.55rem;
+  padding: 0.55rem 0.8rem;
+  border: 2px solid #b7c8c1;
+  border-radius: 8px;
+  background: #eef5f1;
+  color: #1f2a2a;
+  cursor: pointer;
+}
+
+.add-character-form-actions button:hover {
+  background: #e1ece7;
+}
+
+.add-character-form-actions button[type="submit"] {
+  border-color: #0b7d3f;
+  background: #d9ede2;
+}
+
+.add-character-form-actions button[type="submit"]:hover {
+  background: #cde5d8;
+}
+
 .party-actions {
   width: min(1100px, 100%);
   margin: 0 auto 1.5rem;
@@ -51,6 +141,11 @@ body {
 
 .party-actions button:hover {
   background: #eef5f1;
+}
+
+.party-actions button.is-active {
+  border-color: #7f1d1d;
+  background: #f7d9d9;
 }
 
 .character-container {
@@ -85,6 +180,12 @@ button.character-card.is-selected {
   box-shadow: 0 0 0 2px #0b7d3f33, 0 4px 0 #d8e4df;
 }
 
+button.character-card.is-remove-selected {
+  border-color: #7f1d1d;
+  box-shadow: 0 0 0 2px #7f1d1d44, 0 4px 0 #d8e4df;
+  background: #fff3f3;
+}
+
 .character-card h2 {
   font-size: 0.8rem;
   margin-bottom: 0.8rem;
@@ -102,6 +203,37 @@ button.character-card.is-selected {
 
 .status-resting {
   color: #7f1d1d;
+}
+
+.remove-action-bar {
+  width: min(1100px, 100%);
+  margin: 1.25rem auto 0;
+  display: none;
+  justify-content: flex-end;
+}
+
+.remove-action-bar.is-visible {
+  display: flex;
+}
+
+#confirm-remove-btn {
+  font: inherit;
+  font-size: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border: 2px solid #b7c8c1;
+  border-radius: 8px;
+  background: #cc2c2c;
+  color: #fff;
+  cursor: pointer;
+}
+
+#confirm-remove-btn:hover:enabled {
+  background: #b82424;
+}
+
+#confirm-remove-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 @media (max-width: 980px) {
